@@ -3,7 +3,6 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -50,13 +49,22 @@ where
 
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
-        //TODO
+        match self.root {
+            Some(ref mut node) => node.insert(value),
+            None => {
+                self.root = Some(Box::new(TreeNode::new(value)));
+            }
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        true
+        if let Some(ref node) = self.root{
+            node.search(value)
+        }else{
+            false
+        }
     }
 }
 
@@ -66,7 +74,47 @@ where
 {
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
-        //TODO
+        match value.cmp(&self.value) {
+            Ordering::Less => {
+                if let Some(ref mut left) = self.left {
+                    left.insert(value);
+                } else {
+                    self.left = Some(Box::new(TreeNode::new(value)));
+                }
+            }
+            Ordering::Greater => {
+                if let Some(ref mut right) = self.right {
+                    right.insert(value);
+                } else {
+                    self.right = Some(Box::new(TreeNode::new(value)));
+                }
+            }
+            Ordering::Equal => {
+                // 忽略重复的值
+            }
+        }
+    }
+
+    fn search(&self, value: T) -> bool{
+        match value.cmp(&self.value){
+            Ordering::Less=>{
+                if let Some(ref left) = self.left{
+                    return left.search(value);
+                } else{
+                    return false;
+                }
+            }
+            Ordering::Greater=>{
+                if let Some(ref right) = self.right{
+                    return right.search(value);
+                }else{
+                    return false;
+                }
+            }
+            Ordering::Equal=>{
+                true
+            }
+        }
     }
 }
 

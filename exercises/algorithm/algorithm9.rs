@@ -2,7 +2,6 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -37,7 +36,25 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+         // 将新元素添加到堆的末尾
+        self.items.push(value);
+        self.count += 1;
+
+        // 向上调整
+        let mut idx = self.count ; // 新元素的索引
+
+        // 父节点的索引
+        while idx > 1 {
+            let parent_idx = self.parent_idx(idx);
+            
+            // 如果当前元素小于（或大于）父节点，交换位置
+            if (self.comparator)(&self.items[idx], &self.items[parent_idx]) {
+                self.items.swap(idx, parent_idx);
+                idx = parent_idx; // 继续向上调整
+            } else {
+                break; // 堆性质已经满足
+            }
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +74,20 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        let left_child = self.left_child_idx(idx);
+        let right_child = self.right_child_idx(idx);
+
+        // 仅考虑存在的子节点
+        if right_child > self.count {
+            return left_child; // 只有左子节点
+        }
+
+        // 返回较小的子节点
+        if (self.comparator)(&self.items[left_child], &self.items[right_child]) {
+            left_child
+        } else {
+            right_child
+        }
     }
 }
 
@@ -84,8 +113,29 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.is_empty() {
+            return None; // 如果堆为空，返回 None
+        }
+    
+        // 取出根节点（堆顶元素）
+        let root_value = self.items.swap_remove(1); // 将根节点与最后一个节点交换，并移除最后一个节点
+        self.count -= 1; // 更新计数
+    
+        // 重新调整堆以保持堆性质
+        let mut idx = 1; // 从根节点开始
+        while self.children_present(idx) {
+            let smallest_child_idx = self.smallest_child_idx(idx);
+            
+            // 如果当前节点大于最小子节点，交换位置
+            if (self.comparator)(&self.items[smallest_child_idx], &self.items[idx]) {
+                self.items.swap(idx, smallest_child_idx);
+                idx = smallest_child_idx; // 继续向下调整
+            } else {
+                break; // 堆性质已经满足
+            }
+        }
+    
+        Some(root_value) // 返回根节点的值
     }
 }
 

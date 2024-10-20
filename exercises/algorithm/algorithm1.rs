@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -69,16 +68,85 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
-        }
-	}
+	// pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	// {
+    //     let a_length:i32 = list_a.length as i32;
+    //     let b_length:i32 = list_b.length as i32;
+    //     let mut Result = LinkedList::<T>::new();
+	// 	let mut i:i32 = 0;
+    //     let mut j:i32 = 0;
+    //     while i<a_length || j<b_length {
+    //         if i==a_length{
+    //             while j<b_length {
+    //                 Result.add(*(list_b.get(j).unwrap()));
+    //                 j=j+1;
+    //             }
+    //             break;
+    //         }
+    //         if j==b_length{
+    //             while i<a_length {
+    //                 Result.add(*(list_a.get(i).unwrap()));
+    //                 i = i+1;
+    //             }
+    //             break;
+    //         }
+    //         let a_node = *(list_a.get(i).unwrap());
+    //         let b_node = *(list_b.get(j).unwrap());
+    //         if a_node >= b_node{
+    //             Result.add(b_node);
+    //             j=j+1;
+    //         } else {
+    //             Result.add(a_node);
+    //             i=i+1;
+    //         }
+    //     }
+    //     //TODO
+	// 	Result
+	// }
 }
+
+
+impl<T: PartialOrd + PartialEq+Clone> LinkedList<T> {
+    pub fn merge(mut list_a: LinkedList<T>, mut list_b: LinkedList<T>) -> Self {
+        let a_length: i32 = list_a.length as i32;
+        let b_length: i32 = list_b.length as i32;
+        let mut result = LinkedList::<T>::new();
+        let mut i: i32 = 0;
+        let mut j: i32 = 0;
+
+        while i < a_length || j < b_length {
+            if i == a_length {
+                while j < b_length {
+                    result.add((list_b.get(j).unwrap()).clone());
+                    j += 1;
+                }
+                break;
+            }
+
+            if j == b_length {
+                while i < a_length {
+                    result.add((list_a.get(i).unwrap()).clone());
+                    i += 1;
+                }
+                break;
+            }
+
+            let a_node = (list_a.get(i).unwrap()).clone();
+            let b_node = (list_b.get(j).unwrap()).clone();
+
+            if a_node >= b_node {
+                result.add(b_node);
+                j += 1;
+            } else {
+                result.add(a_node);
+                i += 1;
+            }
+        }
+        result
+    }
+}
+
+
 
 impl<T> Display for LinkedList<T>
 where
